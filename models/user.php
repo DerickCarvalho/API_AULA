@@ -17,18 +17,45 @@ class User {
         VALUES (:name, :birth_date, :login, :email, :password)";
 
         $stmt = $pdo->prepare($query);
-
-        try {
-            $stmt->execute($params);
-
-            return [
+        $success = $stmt->execute($params);
+        
+        if ($success) {
+            $response = [
                 "status" => true
             ];
+            return $response;
         }
-        catch (\Throwable $th) {
+        else {
             $response = [
-                "status" => false,
-                "error" => $th
+                "status" => false
+            ];
+            return $response;
+        }
+    }
+
+    public static function findUserByLoginOrEmail($login, $email) {
+        $pdo = conn();
+
+        $params = [
+            ":login" => $login,
+            ":email" => $email
+        ];
+
+        $query = "SELECT * FROM usuarios WHERE login = :login OR email = :email";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+        $content = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($content) {
+            $response = [
+                "status" => true,
+                "content" => $content
+            ];
+            return $response;
+        }
+        else {
+            $response = [
+                "status" => false
             ];
             return $response;
         }

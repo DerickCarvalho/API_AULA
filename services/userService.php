@@ -3,7 +3,7 @@ require_once __DIR__ . '../../models/user.php';
 
 class UserService {
     public static function registUser($infos) {
-        if(
+        if (
             empty($infos['name']) ||
             empty($infos['birth_date']) ||
             empty($infos['login']) ||
@@ -17,6 +17,17 @@ class UserService {
         }
 
         return User::create($infos);
+    }
+
+    public static function verifyUserExist($login, $email) {
+        if (empty($login) && empty($email)) {
+            return [
+                "status" => false,
+                "msg" => "Preencha todos os campos!"
+            ];
+        }
+
+        return User::findUserByLoginOrEmail($login, $email);
     }
 }
 ?>
